@@ -20,3 +20,24 @@ variable "web_amis" {
     us-east-2 = "ami-0277b52859bac6f4b"
   }
 }
+
+variable "ugam_api_bucket" {
+  default = "ugam-api-dev"
+  type    = string
+}
+
+variable "vpc" {
+  type = object({
+    cidr = string
+    tenancy = string
+    tags = map(string)
+  })
+  default = {
+    cidr = "10.0.0.0/16"
+    tags = {
+      "Name" = "ugam-vpc-one"
+      "Locatoin" = "Mumbai"
+    }
+    tenancy = "default"
+  }
+}
