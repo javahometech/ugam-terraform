@@ -9,3 +9,8 @@ module "myapp_vpc" {
   }
   app_name = "ugam-api"
 }
+
+module "myapp_alb" {
+  source = "./modules/elb-classic"
+  subnet_ids = module.myapp_vpc.pub_sub_ids
+}
