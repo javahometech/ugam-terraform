@@ -37,3 +37,22 @@ variable "health_check" {
     unhealthy_threshold = 2
   }
 }
+
+variable "lb_sg_ingress_rules" {
+  type = map(object({
+    port     = string
+    protocol = string
+    cidrs    = list(string)
+  }))
+  default = {
+    "80" = {
+      cidrs    = ["0.0.0.0/0"]
+      port     = "80"
+      protocol = "tcp"
+    }
+  }
+}
+
+variable "vpc_id" {
+  
+}

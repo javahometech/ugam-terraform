@@ -1,7 +1,7 @@
 resource "aws_elb" "main" {
   name    = "${var.app_name}-elb-${terraform.workspace}"
   subnets = var.subnet_ids
-
+  security_groups = [aws_security_group.main.id]
   #   access_logs {
   #     bucket        = "foo"
   #     bucket_prefix = "bar"
@@ -34,5 +34,34 @@ resource "aws_elb" "main" {
 
   tags = {
     Name = "${var.app_name}-elb-${terraform.workspace}"
+  }
+}
+
+resource "aws_security_group" "main" {
+  name        = "${var.app_name}_${terraform.workspace}_elb_sg"
+  description = "Allow TLS inbound traffic"
+  vpc_id      = var.vpc_id
+
+  dynamic "ingress" {
+    for_each = var.lb_sg_ingress_rules
+    content {
+      description = "TLS from VPC"
+      from_port   = ingress.value.port
+      to_port     = ingress.value.port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidrs
+    }
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "${var.app_name}_${terraform.workspace}_elb_sg"
   }
 }
